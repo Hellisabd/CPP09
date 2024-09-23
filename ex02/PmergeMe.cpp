@@ -109,14 +109,14 @@ void PmergeMe::insertPairsList()
 void PmergeMe::listSolver()
 {
 	addPairsList();
-	printPairsList();
+	// printPairsList();
 	insertPairsList();	
 }
 
 void PmergeMe::dequeSolver()
 {
 	addPairsDeque();
-	printPairsDeque();
+	// printPairsDeque();
 	insertPairsDeque();
 }
 
