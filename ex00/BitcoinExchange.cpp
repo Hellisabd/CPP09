@@ -189,19 +189,19 @@ void btc(const char *fname)
 
 BitcoinExchange::BitcoinExchange()
 {
-	LOG(GREEN + "Constructor by Default" + NC);
+	//LOG(GREEN + "Constructor by Default" + NC);
 }
 
 BitcoinExchange::BitcoinExchange(const BitcoinExchange& other)
 {
 	(void)other;
-	LOG(BLUE + "Constructor by copy" + NC);
+	//LOG(BLUE + "Constructor by copy" + NC);
 }
 
 
 BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange& other)
 {
-	LOG(PURPLE + "Assignation Operator" + NC);
+	//LOG(PURPLE + "Assignation Operator" + NC);
 	if (this != &other) {
 
 	}
@@ -211,5 +211,5 @@ BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange& other)
 
 BitcoinExchange::~BitcoinExchange()
 {
-	LOG(RED + "Destructor by default" + NC);
+	//LOG(RED + "Destructor by default" + NC);
 }

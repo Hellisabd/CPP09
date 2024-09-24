@@ -5,52 +5,51 @@ void	PmergeMe::printPairsList()
 	int i = 0;
 	for (std::list<std::pair<unsigned int, unsigned int> >::iterator it = _contOfPairsList.begin(); it != _contOfPairsList.end(); ++it)
 	{
-		// std::cout << GREEN + "thats the pair[" << i << "] : first->" << it->first << " | second->" << it->second << NC << std::endl; 
+		std::cout << GREEN + "thats the pair[" << i << "] : first->" << it->first << " | second->" << it->second << NC << std::endl; 
 		i++;
 	}
 }
 
 void PmergeMe::binarySearchList(unsigned int toPlace)
 {
-	unsigned int right = *(--_list.end());
-	unsigned int left = *(_list.begin());
-	std::list<unsigned int>::iterator it = _list.begin();
-	if (toPlace > right)
+	std::list<unsigned int>::iterator right = (--_list.end());
+	std::list<unsigned int>::iterator left = (_list.begin());
+	if (_list.empty())
 		_list.insert(_list.end(), toPlace);
-	else if (toPlace < left)
+	if (toPlace > *right)
+		_list.insert(_list.end(), toPlace);
+	else if (toPlace < *left)
 		_list.insert(_list.begin(), toPlace);
 	else
 	{
-		while (left < right)
+		while (std::distance(left, right) > 0)
 		{
-			unsigned int middle = left + (right - left) / 2;
-			if (toPlace < middle)
+			std::list<unsigned int>::iterator middle = left;
+			std::advance(middle, std::distance(left, right) / 2);
+			if (toPlace < *middle)
 				right = middle;
-			if (toPlace >= middle)
-				left = middle + 1;
+			if (toPlace >= *middle)
+				left = ++middle;
 		}
-		while (it != _list.end() && *it < left)
-			++it;
-		_list.insert(it, toPlace);
+		_list.insert(left, toPlace);
 	}
-
 }
 
 PmergeMe::PmergeMe()
 {
-	LOG(GREEN + "Constructor by Default" + NC);
+	//LOG(GREEN + "Constructor by Default" + NC);
 }
 
 PmergeMe::PmergeMe(const PmergeMe& other)
 {
 	_entryList = other._entryList;
 	_deque = other._deque;
-	LOG(BLUE + "Constructor by copy" + NC);
+	//LOG(BLUE + "Constructor by copy" + NC);
 }
 
 PmergeMe	&PmergeMe::operator=(const PmergeMe& other)
 {
-	LOG(PURPLE + "Assignation Operator" + NC);
+	//LOG(PURPLE + "Assignation Operator" + NC);
 	if (this != &other) {
 
 	}
@@ -78,7 +77,7 @@ void PmergeMe::addPairsList()
 		if (it == _entryList.end())
 			--it;
 		pair.second = *it;
-		sortPairsList(pair);
+		// sortPairsList(pair);
 		_contOfPairsList.push_back(pair);
 	}
 }
@@ -87,18 +86,7 @@ void PmergeMe::insertPairsList()
 {
 	for (std::list<std::pair<unsigned int, unsigned int> >::iterator it = _contOfPairsList.begin(); it != _contOfPairsList.end(); ++it)
 	{
-		if (_list.empty())
-			_list.push_back(it->first);
-		else
-		{
-			std::list<unsigned int>::iterator insert = _list.begin();
-			while (insert != _list.end() && it->first > *insert)
-				++insert;
-			_list.insert(insert, it->first);
-		}
-	}
-	for (std::list<std::pair<unsigned int, unsigned int> >::iterator it = _contOfPairsList.begin(); it != _contOfPairsList.end(); ++it)
-	{
+		binarySearchList(it->first);
 		if (it->first != it->second)
 		{
 			binarySearchList(it->second);
@@ -127,16 +115,6 @@ void PmergeMe::parsing(std::string const &toConvert)
 		throw ParsingError("Wrong input integer overflow or input input than 0");
 	_entryList.push_back(atoi(toConvert.c_str()));
 	_entryDeque.push_back(atoi(toConvert.c_str()));
-	for (std::list<unsigned int>::iterator it = _entryList.begin(); it != _entryList.end(); ++it)
-	{
-		for (std::list<unsigned int>::iterator comp = _entryList.begin(); comp != _entryList.end(); ++comp)
-		{
-			if (comp == it)
-				;
-			else if (*comp == *it)
-				throw ParsingError("Doublon found");
-		}
-	}
 }
 
 void PmergeMe::mergeHim(std::string *argv, int argc)
@@ -156,34 +134,19 @@ void PmergeMe::mergeHim(std::string *argv, int argc)
 		std::cout << *it << " ";
 	}
 	std::cout  << std::endl;
-	struct timeval liststart, listend;
-	struct timeval dequestart, dequeend;
-	gettimeofday(&liststart, NULL);
+	clock_t startlist = clock();
 	my.listSolver();
-	gettimeofday(&listend, NULL);
-	long long listseconds = listend.tv_sec - liststart.tv_sec;
-	long long listmicro = listend.tv_usec - liststart.tv_usec;
-	if (listmicro < 0) {
-        listseconds -= 1;
-        listmicro += 1000000;
-    }
+	clock_t endlist = clock();
 	std::cout << "After : ";
 	for (std::list<unsigned int>::iterator it = my._list.begin();
 											it != my._list.end(); ++it)
 		std::cout << *it << " ";
 	std::cout  << std::endl;
-	gettimeofday(&dequestart, NULL);
+	clock_t startdeque = clock();
 	my.dequeSolver();
-	gettimeofday(&dequeend, NULL);
-	long long dequeseconds = dequeend.tv_sec - dequestart.tv_sec;
-	long long dequemicro = dequeend.tv_usec - dequestart.tv_usec;
-	if (dequemicro < 0) {
-        dequeseconds -= 1;
-        dequemicro += 1000000;
-    }
-
-	std::cout<< "Time to process a range of " << my._entryList.size() << " elements with std::list :" << (listseconds * 1000000LL + listmicro) <<  " microsec" << std::endl;
-	std::cout<< "Time to process a range of " << my._entryDeque.size() << " elements with std::deque :" << (dequeseconds * 1000000LL + dequemicro) << " microsec" << std::endl;
+	clock_t enddeque = clock();
+	std::cout<< "Time to process a range of " << my._entryList.size() << " elements with std::list :" << double(endlist - startlist) * 1000000.0 / CLOCKS_PER_SEC <<  " microsec" << std::endl;
+	std::cout<< "Time to process a range of " << my._entryDeque.size() << " elements with std::deque :" << double(enddeque - startdeque) * 1000000.0 / CLOCKS_PER_SEC << " microsec" << std::endl;
 
 
 
@@ -206,7 +169,7 @@ void PmergeMe::mergeHim(std::string *argv, int argc)
 
 PmergeMe::~PmergeMe()
 {
-	LOG(RED + "Destructor by default" + NC);
+	//LOG(RED + "Destructor by default" + NC);
 }
 
 
@@ -215,35 +178,34 @@ void	PmergeMe::printPairsDeque()
 	int i = 0;
 	for (std::deque<std::pair<unsigned int, unsigned int> >::iterator it = _contOfPairsDeque.begin(); it != _contOfPairsDeque.end(); ++it)
 	{
-		// std::cout << GREEN + "thats the pair[" << i << "] : first->" << it->first << " | second->" << it->second << NC << std::endl; 
+		std::cout << GREEN + "thats the pair[" << i << "] : first->" << it->first << " | second->" << it->second << NC << std::endl; 
 		i++;
 	}
 }
 
 void PmergeMe::binarySearchDeque(unsigned int toPlace)
 {
-	unsigned int right = *(--_deque.end());
-	unsigned int left = *(_deque.begin());
-	std::deque<unsigned int>::iterator it = _deque.begin();
-	if (toPlace > right)
+	std::deque<unsigned int>::iterator right = (--_deque.end());
+	std::deque<unsigned int>::iterator left = (_deque.begin());
+	if (_deque.empty())
 		_deque.insert(_deque.end(), toPlace);
-	else if (toPlace < left)
+	if (toPlace > *right)
+		_deque.insert(_deque.end(), toPlace);
+	else if (toPlace < *left)
 		_deque.insert(_deque.begin(), toPlace);
 	else
 	{
-		while (left < right)
+		while (std::distance(left, right) > 0)
 		{
-			unsigned int middle = left + (right - left) / 2;
-			if (toPlace < middle)
+			std::deque<unsigned int>::iterator middle = left;
+			std::advance(middle, std::distance(left, right) / 2);
+			if (toPlace < *middle)
 				right = middle;
-			if (toPlace >= middle)
-				left = middle + 1;
+			if (toPlace >= *middle)
+				left = ++middle;
 		}
-		while (it != _deque.end() && *it < left)
-			++it;
-		_deque.insert(it, toPlace);
+		_deque.insert(left, toPlace);
 	}
-
 }
 
 void PmergeMe::sortPairsDeque(std::pair<unsigned int, unsigned int> &pair)
@@ -288,6 +250,7 @@ void PmergeMe::insertPairsDeque()
 	}
 	for (std::deque<std::pair<unsigned int, unsigned int> >::iterator it = _contOfPairsDeque.begin(); it != _contOfPairsDeque.end(); ++it)
 	{
+		binarySearchDeque(it->first);
 		if (it->first != it->second)
 		{
 			binarySearchDeque(it->second);

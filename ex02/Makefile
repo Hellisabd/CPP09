@@ -43,7 +43,8 @@ re :	fclean all
 
 ex :	re clean
 	@echo "$(GREEN)(•̀ᴗ•́)و ̑̑ALL FINE!(•̀ᴗ•́)و ̑̑$(DEF_COLOR)"
-	@ ./PmergeMe `shuf -i 1-45 -n 25 | tr "\n" " "`
+	@echo "$(PURPLE)testing : shuf -i 1-3000 -n 3000$(DEF_COLOR)"
+	@./PmergeMe `shuf -i 1-3000 -n 3000 | tr "\n" " "`
 
 git	:	fclean
 	@$(RM) */a.out a.out
@@ -53,4 +54,5 @@ git	:	fclean
 	@echo "$(GREEN)(•̀ᴗ•́)و ̑̑GIT UPDATE!(•̀ᴗ•́)و ̑̑$(DEF_COLOR)"
 
 val : re clean
-	@valgrind -s --leak-check=full --show-leak-kinds=all  ./PmergeMe `shuf -i 1-45 -n 25 | tr "\n" " "`
+	@echo "$(YELLOW)testing with valgrind: shuf -i 1-3000 -n 3000$(DEF_COLOR)"
+	@valgrind -s --leak-check=full --show-leak-kinds=all  ./PmergeMe `shuf -i 1-3000 -n 3000 | tr "\n" " "`
