@@ -15,7 +15,10 @@ void PmergeMe::binarySearchList(unsigned int toPlace)
 	std::list<unsigned int>::iterator right = (--_list.end());
 	std::list<unsigned int>::iterator left = (_list.begin());
 	if (_list.empty())
+	{
 		_list.insert(_list.end(), toPlace);
+		return ;
+	}
 	if (toPlace > *right)
 		_list.insert(_list.end(), toPlace);
 	else if (toPlace < *left)
@@ -88,16 +91,14 @@ void PmergeMe::insertPairsList()
 	{
 		binarySearchList(it->first);
 		if (it->first != it->second)
-		{
 			binarySearchList(it->second);
-		}
 	}
 }
 
 void PmergeMe::listSolver()
 {
 	addPairsList();
-	// printPairsList();
+	printPairsList();
 	insertPairsList();	
 }
 
@@ -113,6 +114,9 @@ void PmergeMe::parsing(std::string const &toConvert)
 {
 	if (atol(toConvert.c_str()) > INT_MAX || atol(toConvert.c_str()) < 0)
 		throw ParsingError("Wrong input integer overflow or input input than 0");
+	for (std::size_t i = 0; i < toConvert.size(); i++)
+		if (toConvert[i] < '0' || toConvert[i] > '9')
+		throw ParsingError("Invalid input");
 	_entryList.push_back(atoi(toConvert.c_str()));
 	_entryDeque.push_back(atoi(toConvert.c_str()));
 }
@@ -134,16 +138,30 @@ void PmergeMe::mergeHim(std::string *argv, int argc)
 		std::cout << *it << " ";
 	}
 	std::cout  << std::endl;
+	clock_t endlist;
 	clock_t startlist = clock();
-	my.listSolver();
-	clock_t endlist = clock();
-	std::cout << "After : ";
-	for (std::list<unsigned int>::iterator it = my._list.begin();
+	if (my._entryList.size() > 1)
+	{
+		my.listSolver();
+		endlist = clock();
+		std::cout << "After : ";
+		for (std::list<unsigned int>::iterator it = my._list.begin();
 											it != my._list.end(); ++it)
 		std::cout << *it << " ";
-	std::cout  << std::endl;
+		std::cout  << std::endl;
+	}
+	else
+	{
+		endlist = clock();
+		for (std::list<unsigned int>::iterator it = my._entryList.begin();
+											it != my._entryList.end(); ++it)
+		std::cout << *it << " ";
+		std::cout  << std::endl;
+	}
+	std::cout << "After : ";
 	clock_t startdeque = clock();
-	my.dequeSolver();
+	if (my._entryDeque.size() > 1)
+		my.dequeSolver();
 	clock_t enddeque = clock();
 	std::cout<< "Time to process a range of " << my._entryList.size() << " elements with std::list :" << double(endlist - startlist) * 1000000.0 / CLOCKS_PER_SEC <<  " microsec" << std::endl;
 	std::cout<< "Time to process a range of " << my._entryDeque.size() << " elements with std::deque :" << double(enddeque - startdeque) * 1000000.0 / CLOCKS_PER_SEC << " microsec" << std::endl;
@@ -188,7 +206,10 @@ void PmergeMe::binarySearchDeque(unsigned int toPlace)
 	std::deque<unsigned int>::iterator right = (--_deque.end());
 	std::deque<unsigned int>::iterator left = (_deque.begin());
 	if (_deque.empty())
+	{
 		_deque.insert(_deque.end(), toPlace);
+		return ;
+	}
 	if (toPlace > *right)
 		_deque.insert(_deque.end(), toPlace);
 	else if (toPlace < *left)
