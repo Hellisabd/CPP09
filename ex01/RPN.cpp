@@ -3,30 +3,50 @@
 
 void RPN::soustraction()
 {
-	long tmp = _stack.top();
+	int tmp = _stack.top();
+	long over = _stackOverflow.top();
 	_stack.pop();
+	_stackOverflow.pop();
+	_stackOverflow.top() = _stackOverflow.top() - over;
 	_stack.top() = _stack.top() - tmp;
+	if (_stackOverflow.top() != _stack.top())
+		throw ParsingError("Overflow detected");
 }
 
 void RPN::addition()
 {
-	long tmp = _stack.top();
+	int tmp = _stack.top();
+	long over = _stackOverflow.top();
 	_stack.pop();
+	_stackOverflow.pop();
+	_stackOverflow.top() = _stackOverflow.top() + over;
 	_stack.top() = _stack.top() + tmp;
+	if (_stackOverflow.top() != _stack.top())
+		throw ParsingError("Overflow detected");
 }
 
 void RPN::multiplication()
 {
-	long tmp = _stack.top();
+	int tmp = _stack.top();
+	long over = _stackOverflow.top();
 	_stack.pop();
+	_stackOverflow.pop();
+	_stackOverflow.top() = _stackOverflow.top() * over;
 	_stack.top() = _stack.top() * tmp;
+	if (_stackOverflow.top() != _stack.top())
+		throw ParsingError("Overflow detected");
 }
 
 void RPN::division()
 {
-	long tmp = _stack.top();
+	int tmp = _stack.top();
+	long over = _stackOverflow.top();
 	_stack.pop();
+	_stackOverflow.pop();
+	_stackOverflow.top() = _stackOverflow.top() / over;
 	_stack.top() = _stack.top() / tmp;
+	if (_stackOverflow.top() != _stack.top())
+		throw ParsingError("Overflow detected");
 }
 
 void RPN::calcul(char op)
@@ -64,6 +84,7 @@ void RPN::rpn(std::string const &str)
 		if (str[i] <= '9' && str[i] >= '0')
 		{
 			my._stack.push(atol(str.c_str() + i));
+			my._stackOverflow.push(atol(str.c_str() + i));
 			if (my._stack.top() > 9)
 				throw ParsingError("Input greater than 10 pls do the right thing!");
 		}

@@ -55,5 +55,6 @@ class RPN {
 		void multiplication();
 		void division();
 
-		std::stack<long> _stack;
+		std::stack<int> _stack;
+		std::stack<long> _stackOverflow;
 };
